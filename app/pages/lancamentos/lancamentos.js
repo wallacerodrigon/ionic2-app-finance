@@ -5,6 +5,7 @@ import {DAOContas} from "../../dao/dao-contas";
 import {DAOLancamentos} from "../../dao/dao-lancamentos";
 import {DataUtil} from "../../util/data.util";
 import {DataFilter} from "../../components/data-filter/data-filter";
+import {RelatorioPage} from "../../pages/relatorio/relatorio";
 
 @Page({
     templateUrl: 'build/pages/lancamentos/lancamentos.html',
@@ -38,9 +39,7 @@ export class LancamentosPage {
         let endDate      = dataUtil.getLastDay(this.dataFiltro);
         // Lançamentos
         this.lancamentos = [];
-        this.dao.list(startDate, endDate, lancamentos=> {
-            this.lancamentos = lancamentos;
-        });
+        this.dao.list(startDate, endDate, lancamentos=> this.lancamentos = lancamentos);
     }
 
     _updateSaldo() {
@@ -66,7 +65,7 @@ export class LancamentosPage {
     edit(lancamento) {
         let modal = Modal.create(ModalLancamentoPage, {parametro: lancamento});
         modal.onDismiss(lancamento=> {
-           this._update(lancamento);
+            this._update(lancamento);
         });
         this.nav.present(modal);
     }
@@ -74,7 +73,7 @@ export class LancamentosPage {
     _update(lancamento) {
         this.dao.update(lancamento, data=> {
             this.updateMonth();
-            Toast.showShortBottom('Lançamento editado').subscribe(text=>console.log(text));
+            // Toast.showShortBottom('Lançamento editado').subscribe(text=>console.log(text));
         });
     }
 
@@ -106,12 +105,6 @@ export class LancamentosPage {
         return dataUtil.parseString(lancamento.data);
     }
 
-    getConta(lancamento) {
-        return this.contas.filter(conta=> {
-            return parseInt(conta.id) == parseInt(lancamento.conta);
-        })[0];
-    }
-
     situacaoLancamento(lancamento) {
         return lancamento.pago ? 'Pago' : 'Não Pago';
     }
@@ -124,8 +117,12 @@ export class LancamentosPage {
         lancamento.pago = lancamento.pago ? 0 : 1;
         this._update(lancamento);
     }
-    
+
     paymentButtonText(lancamento) {
         return lancamento.pago ? 'Reabrir' : 'Pagar';
+    }
+
+    onClickMonth() {
+        this.nav.push(RelatorioPage, {parametro: this.dataFiltro});
     }
 }

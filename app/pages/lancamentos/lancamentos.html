@@ -7,15 +7,17 @@
 
 <ion-content class="lancamentos">
 
-    <data-filter [startDate]="dataFiltro" (changeMonth)="updateMonth($event)"></data-filter>
+    <data-filter [startDate]="dataFiltro" (changeMonth)="updateMonth($event)"
+                 (clickMonth)="onClickMonth()"></data-filter>
 
     <ion-list>
+        <ion-item *ngIf="lancamentos.length==0" class="center">Nenhum lançamento neste mês</ion-item>
         <ion-item-sliding *ngFor="let item of lancamentos">
             <ion-item [ngClass]="{entrada:lancamentoEntrada(item),saida:!lancamentoEntrada(item)}" (click)="edit(item)">
                 <ion-row>
                     <ion-col width-67>
                         <h2>{{item.descricao}}</h2>
-                        <p>{{getConta(item).descricao}}</p>
+                        <p>{{item.conta_name}}</p>
                         <p>{{getDate(item)}}</p>
                     </ion-col>
                     <ion-col width-33>
@@ -26,8 +28,13 @@
                 </ion-row>
             </ion-item>
             <ion-item-options>
-                <button (click)="changePaymentStatus(item)" ><ion-icon name="cash"></ion-icon><span>{{paymentButtonText(item)}}</span></button>
-                <button danger (click)="delete(item)"><ion-icon name="trash"></ion-icon> Excluir</button>
+                <button (click)="changePaymentStatus(item)">
+                    <ion-icon name="cash"></ion-icon>
+                    <span>{{paymentButtonText(item)}}</span></button>
+                <button danger (click)="delete(item)">
+                    <ion-icon name="trash"></ion-icon>
+                    Excluir
+                </button>
             </ion-item-options>
         </ion-item-sliding>
 

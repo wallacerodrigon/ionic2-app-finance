@@ -32,7 +32,7 @@
 
     <ion-item>
       <ion-label stacked>Conta</ion-label>
-      <ion-select [(ngModel)]="lancamento.conta">
+      <ion-select [(ngModel)]="lancamento.conta_id">
         <ion-option *ngFor="let item of contas" value="{{item.id}}">{{item.descricao}}</ion-option>
       </ion-select>
     </ion-item>

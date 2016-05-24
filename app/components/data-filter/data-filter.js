@@ -9,12 +9,13 @@ import {DataUtil} from "../../util/data.util";
 @Component({
     selector: 'data-filter',
     inputs: ['startDate'],
-    outputs: ['changeMonth'],
+    outputs: ['changeMonth', 'clickMonth'],
     templateUrl: 'build/components/data-filter/data-filter.html'
 })
 export class DataFilter {
     constructor() {
         this.changeMonth = new EventEmitter();
+        this.clickMonth  = new EventEmitter()
     }
 
     ngOnInit() {
@@ -45,4 +46,9 @@ export class DataFilter {
         this.startDate.setMonth(this.startDate.getMonth() + 1);
         this._updateMonth();
     }
+
+    executeClickMonth() {
+        this.clickMonth.next(this.startDate.getMonth());
+    }
+
 }

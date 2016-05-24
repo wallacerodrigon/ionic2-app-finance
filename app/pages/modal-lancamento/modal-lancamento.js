@@ -23,16 +23,15 @@ export class ModalLancamentoPage {
             this.lancamento = {
                 entradaSaida: "entrada",
                 valor: 0,
-                data: dataUtil.getDate(),
-                conta: 1
+                data: dataUtil.getDate()
             };
         }
         // Contas
         this.dao = new DAOContas();
         this.dao.list(lista=> {
             this.contas = lista;
-            if (lancamento) {
-                this.lancamento.conta = lista[0].id;
+            if (!lancamento) {
+                this.lancamento.conta_id = lista[0].id;
             }
         });
     }

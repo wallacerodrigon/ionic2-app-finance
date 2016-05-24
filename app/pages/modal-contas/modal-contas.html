@@ -7,12 +7,14 @@
     <ion-title>Contas</ion-title>
 </ion-toolbar>
 
-<ion-content padding class="modal-contas">
+<ion-content class="modal-contas">
     <ion-list>
         <ion-item>
             <ion-label stacked>Descrição</ion-label>
             <ion-input type="text" [(ngModel)]="conta.descricao"></ion-input>
         </ion-item>
     </ion-list>
-    <button block light (click)="save(conta)">Salvar</button>
+    <div padding>
+        <button block light (click)="save(conta)">Salvar</button>
+    </div>
 </ion-content>

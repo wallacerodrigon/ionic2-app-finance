@@ -5,7 +5,7 @@
         </button>
     </ion-col>
     <ion-col class="center" width-75>
-        <h4>{{mesSelecionado}}</h4>
+        <h4 favorite (click)="executeClickMonth()">{{mesSelecionado}}</h4>
     </ion-col>
     <ion-col width-10>
         <button primary clear rounded (click)="nextMonth()">
