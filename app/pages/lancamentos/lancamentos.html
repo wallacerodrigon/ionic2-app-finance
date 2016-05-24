@@ -1,0 +1,36 @@
+<ion-navbar primary *navbar>
+    <button menuToggle>
+        <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title> Lançamentos</ion-title>
+
+</ion-navbar>
+
+<ion-content class="lancamentos">
+
+    <ion-list>
+        <ion-item-sliding *ngFor="let item of lancamentos">
+            <ion-item [ngClass]="{entrada:lancamentoEntrada(item),saida:!lancamentoEntrada(item)}" (click)="edit(item)">
+                <ion-row>
+                    <ion-col width-67>
+                        <h2>{{item.descricao}}</h2>
+                        <p>{{getConta(item).descricao}}</p>
+                        <p>{{getDate(item)}}</p>
+                    </ion-col>
+                    <ion-col width-33>
+                        <p>{{item.valor | currency:"BRL":true:1.2}}</p>
+                        <p>{{situacaoLancamento(item)}}</p>
+                    </ion-col>
+                </ion-row>
+            </ion-item>
+            <ion-item-options>
+                <button danger (click)="delete(item)">Excluir</button>
+            </ion-item-options>
+        </ion-item-sliding>
+
+    </ion-list>
+
+    <button fab fab-bottom fab-right primary (click)="insert()">
+        <ion-icon name="add"></ion-icon>
+    </button>
+</ion-content>

@@ -15,8 +15,8 @@ export class ContasPage {
     constructor(nav) {
         this.nav = nav;
         this.dao = new DAOContas();
-        this.dao.getList(lista=> {
-            this.listContas = lista;
+        this.dao.list(lista=> {
+            this.list = lista;
         });
 
     }
@@ -27,7 +27,7 @@ export class ContasPage {
         modal.onDismiss(conta=> {
             if (conta) {
                 this.dao.insert(conta, newConta=> {
-                    this.listContas.push(newConta);
+                    this.list.push(newConta);
                     Toast.showShortBottom('Conta adicionada').subscribe(text=>console.log(text));
                 });
             }
@@ -39,7 +39,7 @@ export class ContasPage {
     edit(conta) {
         let modal = Modal.create(ModalContasPage, {parametro: conta});
         modal.onDismiss(conta => {
-            this.dao.edit(conta, data=> {
+            this.dao.updae(conta, data=> {
                 console.log('Edit', conta);
                 Toast.showShortBottom('Conta editada').subscribe(text=>console.log(text));
             })
@@ -57,8 +57,8 @@ export class ContasPage {
                     text: 'Sim',
                     handler: ()=> {
                         this.dao.delete(conta, data=> {
-                            let pos = this.listContas.indexOf(conta);
-                            this.listContas.splice(pos, 1);
+                            let pos = this.list.indexOf(conta);
+                            this.list.splice(pos, 1);
                             Toast.showShortBottom('Conta deletada').subscribe(text=>console.log(text));
                         });
                     }

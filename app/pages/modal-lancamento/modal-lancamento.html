@@ -1,0 +1,49 @@
+
+<ion-toolbar primary>
+  <ion-buttons start>
+    <button (click)="close()">
+      <ion-icon name="close"></ion-icon>
+    </button>
+  </ion-buttons>
+  <ion-title>Lançar</ion-title>
+</ion-toolbar>
+
+<ion-content padding class="modal-lancamento">
+  <ion-list>
+    <ion-item>
+      <ion-label stacked>Descrição</ion-label>
+      <ion-input type="text"  [(ngModel)]="lancamento.descricao"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label stacked>Valor</ion-label>
+      <ion-input type="number" [(ngModel)]="lancamento.valor"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label stacked>Data</ion-label>
+      <ion-datetime displayFormat="DD/MMM/YYYY" [(ngModel)]="lancamento.data"></ion-datetime>
+    </ion-item>
+    <ion-item>
+      <ion-label stacked>Entrada/Saída</ion-label>
+      <ion-select [(ngModel)]="lancamento.entradaSaida">
+        <ion-option value="entrada">Entrada</ion-option>
+        <ion-option value="saida">Saída</ion-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label stacked>Conta</ion-label>
+      <ion-select [(ngModel)]="lancamento.conta">
+        <ion-option *ngFor="let item of contas" value="{{item.id}}">{{item.descricao}}</ion-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label stacked>Pago</ion-label>
+      <ion-checkbox [(ngModel)]="lancamento.pago"></ion-checkbox>
+    </ion-item>
+  </ion-list>
+
+  <pre>{{lancamento | json}}</pre>
+
+  <button block light (click)="save()">SALVAR</button>
+</ion-content>

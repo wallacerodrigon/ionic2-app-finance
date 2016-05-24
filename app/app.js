@@ -5,7 +5,9 @@ import {ContasPage} from "./pages/contas/contas";
 
 @App({
     templateUrl: 'build/app.html',
-    config: {} // http://ionicframework.com/docs/v2/api/config/Config/
+    config: {
+        mode: 'md'
+    } // http://ionicframework.com/docs/v2/api/config/Config/
 })
 export class MyApp {
     static get parameters() {
@@ -16,7 +18,7 @@ export class MyApp {
         this.home   = HomePage;
         this.contas = ContasPage;
 
-        this.raiz = this.contas;
+        this.raiz = this.home;
 
         platform.ready().then(() => {
             // Okay, so the platform is ready and our plugins are available.

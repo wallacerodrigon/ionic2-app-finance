@@ -1,14 +1,16 @@
 import {Storage, SqlStorage} from "ionic-angular";
 
-export class DAOContas {
-    constructor() {
+export class DAO {
+    constructor(database, schema) {
         let storage = new Storage(SqlStorage);
+        this.db     = database;
+        this.schema = schema;
 
         // create table if not exists
         storage
-            .query("CREATE TABLE IF NOT EXISTS contas (id INTEGER PRIMARY KEY AUTOINCREMENT, descricao TEXT)")
+            .query("CREATE TABLE IF NOT EXISTS " + this.db + " (id INTEGER PRIMARY KEY AUTOINCREMENT, descricao TEXT)")
             .then(data=> {
-                console.log('Tabela criada', data);
+                console.log('Tabela ', this.db, 'cridada');
             }, error=> {
                 console.log('Erro na criação da tabela', JSON.stringify(error.err));
             });
@@ -17,7 +19,7 @@ export class DAOContas {
     list(cb) {
         let storage = new Storage(SqlStorage);
         storage
-            .query("SELECT * FROM contas")
+            .query("SELECT * FROM " + this.db)
             .then(data=> {
                 let lista = [];
 
@@ -39,7 +41,7 @@ export class DAOContas {
     insert(conta, cb) {
         let storage = new Storage(SqlStorage);
         storage
-            .query("INSERT INTO contas (descricao) VALUES(?)", [conta.descricao])
+            .query("INSERT INTO " + this.db + " (descricao) VALUES(?)", [conta.descricao])
             .then(data=> {
                 conta.id = data.res.insertId;
                 console.log('insert', conta);
@@ -49,10 +51,10 @@ export class DAOContas {
             });
     }
 
-    updae(conta, cb) {
+    update(conta, cb) {
         let storage = new Storage(SqlStorage);
         storage
-            .query("UPDATE contas SET descricao = ? WHERE id = ?", [conta.descricao, conta.id])
+            .query("UPDATE " + this.db + " SET descricao = ? WHERE id = ?", [conta.descricao, conta.id])
             .then(data=> {
                 cb(conta);
             }, error=> {
@@ -63,7 +65,7 @@ export class DAOContas {
     delete(conta, cb) {
         let storage = new Storage(SqlStorage);
         storage
-            .query("DELETE FROM contas WHERE id= ?", [conta.id])
+            .query("DELETE FROM " + this.db + " WHERE id= ?", [conta.id])
             .then(data=> {
                 cb(conta);
             }, error=> {

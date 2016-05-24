@@ -18,6 +18,6 @@ export class ModalContasPage {
     }
 
     save(conta) {
-        this.view.dismiss(this.conta);
+        this.view.dismiss(conta);
     }
 }
