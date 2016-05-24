@@ -1,4 +1,4 @@
-import {Page, Alert, NavController, Modal} from "ionic-angular";
+import {Page, Alert, NavController, Modal, Events} from "ionic-angular";
 import {Toast} from "ionic-native";
 import {ModalLancamentoPage} from "../modal-lancamento/modal-lancamento";
 import {DAOContas} from "../../dao/dao-contas";
@@ -12,18 +12,19 @@ import {DataFilter} from "../../components/data-filter/data-filter";
 })
 export class LancamentosPage {
     static get parameters() {
-        return [[NavController]];
+        return [[NavController], [Events]];
     }
 
-    constructor(nav) {
-        this.nav       = nav;
+    constructor(nav, events) {
+        this.nav = nav;
 
+        this.events = events;
         // Lançamentos
-        this.dao       = new DAOLancamentos();
+        this.dao    = new DAOLancamentos();
 
         // Contas
         this.daoContas = new DAOContas();
-        this.contas     = [];
+        this.contas    = [];
         this.daoContas.list(contas=> {
             this.contas = contas;
         });
@@ -32,22 +33,30 @@ export class LancamentosPage {
     }
 
     _getList() {
-
-        let dataUtil    = new DataUtil();
-        let startDate   = dataUtil.getFirstDay(this.dataFiltro);
-        let endDate     = dataUtil.getLastDay(this.dataFiltro);
+        let dataUtil     = new DataUtil();
+        let startDate    = dataUtil.getFirstDay(this.dataFiltro);
+        let endDate      = dataUtil.getLastDay(this.dataFiltro);
         // Lançamentos
         this.lancamentos = [];
         this.dao.list(startDate, endDate, lancamentos=> {
             this.lancamentos = lancamentos;
-        })
+        });
+    }
+
+    _updateSaldo() {
+        this.dao.getSaldo(saldo=>this.events.publish('saldo:updated', saldo));
+    }
+
+    updateMonth() {
+        this._getList();
+        this._updateSaldo();
     }
 
     insert() {
         let modal = Modal.create(ModalLancamentoPage);
         modal.onDismiss(lancamento=> {
             this.dao.insert(lancamento, newLancamento=> {
-                this._getList();
+                this.updateMonth();
                 Toast.showShortBottom('Lançamento adicinado').subscribe(text=>console.log(text));
             })
         });
@@ -57,12 +66,16 @@ export class LancamentosPage {
     edit(lancamento) {
         let modal = Modal.create(ModalLancamentoPage, {parametro: lancamento});
         modal.onDismiss(lancamento=> {
-            this.dao.update(lancamento, data=> {
-                this._getList();
-                Toast.showShortBottom('Lançamento editado').subscribe(text=>console.log(text));
-            })
+           this._update(lancamento);
         });
         this.nav.present(modal);
+    }
+
+    _update(lancamento) {
+        this.dao.update(lancamento, data=> {
+            this.updateMonth();
+            Toast.showShortBottom('Lançamento editado').subscribe(text=>console.log(text));
+        });
     }
 
     delete(lancamento) {
@@ -74,7 +87,7 @@ export class LancamentosPage {
                     text: 'Sim',
                     handler: ()=> {
                         this.dao.delete(lancamento, data=> {
-                            this._getList();
+                            this.updateMonth();
                             Toast.showShortBottom('Conta deletada').subscribe(text=>console.log(text));
                         });
                     }
@@ -87,10 +100,6 @@ export class LancamentosPage {
         this.nav.present(confirm);
     }
 
-    updateMonth(mes) {
-        console.log('Mes alterado', mes.getMonth());
-        this._getList();
-    }
 
     getDate(lancamento) {
         let dataUtil = new DataUtil();
@@ -111,5 +120,12 @@ export class LancamentosPage {
         return lancamento.entradaSaida == 'entrada';
     }
 
-
+    changePaymentStatus(lancamento) {
+        lancamento.pago = lancamento.pago ? 0 : 1;
+        this._update(lancamento);
+    }
+    
+    paymentButtonText(lancamento) {
+        return lancamento.pago ? 'Reabrir' : 'Pagar';
+    }
 }

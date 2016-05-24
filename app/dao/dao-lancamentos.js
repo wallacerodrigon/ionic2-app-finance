@@ -18,7 +18,7 @@ export class DAOLancamentos {
     list(dataInicio, dataFim, cb) {
         let storage = new Storage(SqlStorage);
         storage
-            .query("SELECT * FROM lancamentos WHERE data >= ? AND data <= ?",[dataInicio.getTime(), dataFim.getTime()])
+            .query("SELECT * FROM lancamentos WHERE data >= ? AND data <= ?", [dataInicio.getTime(), dataFim.getTime()])
             .then(data=> {
                     let lista = [];
                     for (let i = 0; i < data.res.rows.length; i++) {
@@ -72,6 +72,34 @@ export class DAOLancamentos {
             .query("DELETE FROM lancamentos WHERE id= ?", [conta.id])
             .then(data=> {
                 cb(conta);
+            }, error=> {
+                console.log('Erro de adicionar a conta', JSON.stringify(error.err));
+            });
+    }
+
+    getSaldo(cb) {
+        let storage = new Storage(SqlStorage);
+        storage
+            .query(`
+            SELECT conta, entradaSaida, TOTAL(valor) as saldo from lancamentos
+            WHERE pago=1 AND entradaSaida = 'entrada'
+            UNION
+            SELECT conta, entradaSaida,TOTAL(valor) as saldo from lancamentos
+            WHERE pago=1 AND entradaSaida = 'saidas'
+            `, [])
+            .then(data=> {
+                let saldo = 0;
+                let rows = data.res.rows;
+                for (let i = 0; i < rows.length; i++) {
+                    let item = rows.item(i);
+                    console.log(item);
+                    if (item.entradaSaida == 'entrada')
+                        saldo += item.saldo
+                    else
+                        saldo -= item.saldo
+                }
+
+                cb(saldo);
             }, error=> {
                 console.log('Erro de adicionar a conta', JSON.stringify(error.err));
             });

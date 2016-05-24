@@ -8,7 +8,7 @@
   <ion-title>Lançar</ion-title>
 </ion-toolbar>
 
-<ion-content padding class="modal-lancamento">
+<ion-content class="modal-lancamento">
   <ion-list>
     <ion-item>
       <ion-label stacked>Descrição</ion-label>
@@ -42,8 +42,6 @@
       <ion-checkbox [(ngModel)]="lancamento.pago"></ion-checkbox>
     </ion-item>
   </ion-list>
-
-  <pre>{{lancamento | json}}</pre>
 
   <button block light (click)="save()">SALVAR</button>
 </ion-content>

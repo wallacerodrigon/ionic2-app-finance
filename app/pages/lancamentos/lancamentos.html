@@ -3,7 +3,6 @@
         <ion-icon name="menu"></ion-icon>
     </button>
     <ion-title> Lançamentos</ion-title>
-
 </ion-navbar>
 
 <ion-content class="lancamentos">
@@ -27,13 +26,14 @@
                 </ion-row>
             </ion-item>
             <ion-item-options>
-                <button danger (click)="delete(item)">Excluir</button>
+                <button (click)="changePaymentStatus(item)" ><ion-icon name="cash"></ion-icon><span>{{paymentButtonText(item)}}</span></button>
+                <button danger (click)="delete(item)"><ion-icon name="trash"></ion-icon> Excluir</button>
             </ion-item-options>
         </ion-item-sliding>
 
     </ion-list>
 
-    <button fab fab-bottom fab-right primary (click)="insert()">
+    <button fab fab-bottom fab-right favorite (click)="insert()">
         <ion-icon name="add"></ion-icon>
     </button>
 </ion-content>

@@ -1,0 +1,11 @@
+<ion-navbar primary *navbar>
+    <button menuToggle>
+        <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Saldo</ion-title>
+</ion-navbar>
+
+<ion-content padding class="saldo">
+    <h1 class="center">Saldo Atual</h1>
+    <h1 primary class="center">{{saldo | currency:'BRL':true:1.2}}</h1>
+</ion-content>
