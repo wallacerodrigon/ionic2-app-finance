@@ -1,0 +1,15 @@
+<ion-row>
+    <ion-col width-10>
+        <button primary clear rounded (click)="previousMonth()">
+            <ion-icon name="arrow-dropleft-circle"></ion-icon>
+        </button>
+    </ion-col>
+    <ion-col class="center" width-75>
+        <h4>{{mesSelecionado}}</h4>
+    </ion-col>
+    <ion-col width-10>
+        <button primary clear rounded (click)="nextMonth()">
+            <ion-icon name="arrow-dropright-circle"></ion-icon>
+        </button>
+    </ion-col>
+</ion-row>

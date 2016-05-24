@@ -8,6 +8,8 @@
 
 <ion-content class="lancamentos">
 
+    <data-filter [startDate]="dataFiltro" (changeMonth)="updateMonth($event)"></data-filter>
+
     <ion-list>
         <ion-item-sliding *ngFor="let item of lancamentos">
             <ion-item [ngClass]="{entrada:lancamentoEntrada(item),saida:!lancamentoEntrada(item)}" (click)="edit(item)">
@@ -19,6 +21,7 @@
                     </ion-col>
                     <ion-col width-33>
                         <p>{{item.valor | currency:"BRL":true:1.2}}</p>
+                        <p>{{item.entradaSaida}}</p>
                         <p>{{situacaoLancamento(item)}}</p>
                     </ion-col>
                 </ion-row>

@@ -16,20 +16,24 @@ export class ModalLancamentoPage {
         let lancamento = params.get('parametro');
         console.log(lancamento);
         if (lancamento) {
-            this.lancamento = lancamento;
+            this.lancamento      = lancamento;
             this.lancamento.data = this.getDate(this.lancamento.data);
         } else {
+            let dataUtil    = new DataUtil();
             this.lancamento = {
                 entradaSaida: "entrada",
                 valor: 0,
-                data: new Date(),
-                pago: true
+                data: dataUtil.getDate(),
+                conta: 1
             };
         }
         // Contas
         this.dao = new DAOContas();
         this.dao.list(lista=> {
-            this.contas           = lista;
+            this.contas = lista;
+            if (lancamento) {
+                this.lancamento.conta = lista[0].id;
+            }
         });
     }
 
@@ -43,8 +47,8 @@ export class ModalLancamentoPage {
     }
 
     save() {
-        let dataUtil = new DataUtil();
-        this.lancamento.data = dataUtil.parseData(this.lancamento.data);
+        let dataUtil          = new DataUtil();
+        this.lancamento.data  = dataUtil.parseData(this.lancamento.data).getTime();
         this.lancamento.valor = parseFloat(this.lancamento.valor);
         this.lancamento.pago  = this.lancamento.pago ? 1 : 0;
         this.view.dismiss(this.lancamento);

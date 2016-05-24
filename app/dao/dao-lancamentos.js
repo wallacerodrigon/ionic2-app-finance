@@ -15,10 +15,10 @@ export class DAOLancamentos {
                 });
     }
 
-    list(cb) {
+    list(dataInicio, dataFim, cb) {
         let storage = new Storage(SqlStorage);
         storage
-            .query("SELECT * FROM lancamentos")
+            .query("SELECT * FROM lancamentos WHERE data >= ? AND data <= ?",[dataInicio.getTime(), dataFim.getTime()])
             .then(data=> {
                     let lista = [];
                     for (let i = 0; i < data.res.rows.length; i++) {
@@ -46,7 +46,7 @@ export class DAOLancamentos {
     insert(lancamento, cb) {
         let storage = new Storage(SqlStorage);
         storage
-            .query("INSERT INTO lancamentos (descricao, valor, data, conta, entradaSaida,pago) VALUES (?,?,?,?,?,?)", [lancamento.descricao, lancamento.valor, lancamento.data, lancamento.conta, lancamento.entaradaSaida, lancamento.pago])
+            .query("INSERT INTO lancamentos (descricao, valor, data, conta, entradaSaida,pago) VALUES (?,?,?,?,?,?)", [lancamento.descricao, lancamento.valor, lancamento.data, lancamento.conta, lancamento.entradaSaida, lancamento.pago])
             .then(data=> {
                     cb(lancamento);
                 },

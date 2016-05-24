@@ -4,9 +4,11 @@ import {ModalLancamentoPage} from "../modal-lancamento/modal-lancamento";
 import {DAOContas} from "../../dao/dao-contas";
 import {DAOLancamentos} from "../../dao/dao-lancamentos";
 import {DataUtil} from "../../util/data.util";
+import {DataFilter} from "../../components/data-filter/data-filter";
 
 @Page({
     templateUrl: 'build/pages/lancamentos/lancamentos.html',
+    directives: [DataFilter]
 })
 export class LancamentosPage {
     static get parameters() {
@@ -14,17 +16,29 @@ export class LancamentosPage {
     }
 
     constructor(nav) {
-        this.nav         = nav;
+        this.nav       = nav;
+
+        // Lançamentos
+        this.dao       = new DAOLancamentos();
+
         // Contas
-        this.dao         = new DAOLancamentos();
         this.daoContas = new DAOContas();
-        this.contas =[];
-        this.daoContas.list(contas=>{
+        this.contas     = [];
+        this.daoContas.list(contas=> {
             this.contas = contas;
-        })
+        });
+        this.dataFiltro = new Date();
+        this._getList();
+    }
+
+    _getList() {
+
+        let dataUtil    = new DataUtil();
+        let startDate   = dataUtil.getFirstDay(this.dataFiltro);
+        let endDate     = dataUtil.getLastDay(this.dataFiltro);
         // Lançamentos
         this.lancamentos = [];
-        this.dao.list(lancamentos=> {
+        this.dao.list(startDate, endDate, lancamentos=> {
             this.lancamentos = lancamentos;
         })
     }
@@ -33,7 +47,7 @@ export class LancamentosPage {
         let modal = Modal.create(ModalLancamentoPage);
         modal.onDismiss(lancamento=> {
             this.dao.insert(lancamento, newLancamento=> {
-                this.lancamentos.push(newLancamento);
+                this._getList();
                 Toast.showShortBottom('Lançamento adicinado').subscribe(text=>console.log(text));
             })
         });
@@ -44,7 +58,7 @@ export class LancamentosPage {
         let modal = Modal.create(ModalLancamentoPage, {parametro: lancamento});
         modal.onDismiss(lancamento=> {
             this.dao.update(lancamento, data=> {
-                console.log('Data', data);
+                this._getList();
                 Toast.showShortBottom('Lançamento editado').subscribe(text=>console.log(text));
             })
         });
@@ -60,8 +74,7 @@ export class LancamentosPage {
                     text: 'Sim',
                     handler: ()=> {
                         this.dao.delete(lancamento, data=> {
-                            let pos = this.lancamentos.indexOf(lancamento);
-                            this.lancamentos.splice(pos, 1);
+                            this._getList();
                             Toast.showShortBottom('Conta deletada').subscribe(text=>console.log(text));
                         });
                     }
@@ -74,23 +87,28 @@ export class LancamentosPage {
         this.nav.present(confirm);
     }
 
+    updateMonth(mes) {
+        console.log('Mes alterado', mes.getMonth());
+        this._getList();
+    }
+
     getDate(lancamento) {
         let dataUtil = new DataUtil();
         return dataUtil.parseString(lancamento.data);
     }
 
     getConta(lancamento) {
-        return this.contas.filter(conta=>{
+        return this.contas.filter(conta=> {
             return parseInt(conta.id) == parseInt(lancamento.conta);
         })[0];
     }
-    
-    situacaoLancamento (lancamento) {
+
+    situacaoLancamento(lancamento) {
         return lancamento.pago ? 'Pago' : 'Não Pago';
     }
 
     lancamentoEntrada(lancamento) {
-        return lancamento.entradaSaida =='entrada';
+        return lancamento.entradaSaida == 'entrada';
     }
 
 
